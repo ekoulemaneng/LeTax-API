@@ -1,0 +1,924 @@
+openapi: 3.0.2
+info:
+  title: LeFax API
+  version: 0.0.1
+  description: ""
+  contact:
+    name: Ekoulé Maneng
+    email: ekoulemaneng@gmail.com
+    url: www.lefax.cm
+  license:
+      name: OAPI 2015 Licence
+tags:
+  - name: Location
+    description: Location of the student
+  - name: Admins
+    description: Operations by admins
+  - name: Students
+    description: Operations by students
+  - name: Countries
+    description: Operations about countries
+  - name: Tracks
+    description: Operations on tracks 
+servers:
+  - url: 'http://localhost:8080/api/v0.0.1'
+    description: development server 
+  - url: 'https://letax-api.ekoulemaneng.repl.co/api/v0.0.1/'
+    description: production server
+paths:
+  /location:
+    get:
+      tags:
+        - Location
+      summary: Get location of the student
+      operationId: GetLocation
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationResponse'
+  /admins:
+    post:
+      tags:
+        - Admins
+      summary: Create an admin account
+      operationId: CreateAdmin
+      requestBody:
+        description: Created admin object
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+        required: true
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+    get:
+      tags:
+        - Admins
+      summary: Get admin account details
+      operationId: GetAdminDetails
+      security:
+        - api_key: []
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminDetailsResponse'
+    delete:
+      tags:
+        - Admins
+      summary: Delete admin account
+      operationId: DeleteAdmin
+      security:
+        - api_key: []
+      requestBody:
+        description: Create an object
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+             $ref: '#/components/schemas/DeleteUserRequest'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    type: string
+                    default: AdminSuccessfullyDeleted
+  /admins/login:
+    post:
+      tags:
+        - Admins
+      summary: Log in admin account to get api token
+      operationId: LogInAdmin
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CredentialsUserRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogInUserResponse'
+  /admins/name:
+    put:
+      tags:
+        - Admins
+      summary: Update admin name
+      operationId: UpdateAdminName
+      security:
+        - api_key: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateUserNameRequest'
+        required: true
+      responses:
+        200:
+          description: Admin name updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Admin Id
+                  name:
+                    type: string
+                    description: Admin name
+  /admins/password:
+    put:
+      tags:
+        - Admins
+      summary: Modify admin password
+      operationId: ModifyAdminPassword
+      security:
+        - api_key: []    
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateUserPasswordRequest'
+        required: true
+      responses:
+        200:
+          description: Admin password updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    type: string
+                    default: PasswordSuccessfullyModified 
+  /students:
+    post:
+      tags:
+        - Students
+      summary: Create a student account
+      operationId: CreateStudent
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+    get:
+      tags:
+        - Students
+      summary: Get student account details
+      operationId: GetStudentDetails
+      security:
+        - api_key: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentDetailsResponse'
+    delete:
+      tags:
+        - Students
+      summary: Delete student account
+      operationId: DeleteStudent
+      security:
+        - api_key: []
+      requestBody:
+        description: Create an object
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+             $ref: '#/components/schemas/DeleteUserRequest'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    type: string
+                    default: StudentSuccessfullyDeleted
+  /students/login:
+    post:
+      tags:
+        - Students
+      summary: Log in student account to get api token
+      operationId: LogInStudent
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CredentialsUserRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogInUserResponse'   
+  /students/name:
+    put:
+      tags:
+        - Students
+      summary: Update student name
+      operationId: UpdateStudentName
+      security:
+        - api_key: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateUserNameRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentDetailsResponse'
+  /students/password:
+    put:
+      tags:
+        - Students
+      summary: Update admin password
+      operationId: UpdateAdminPassword
+      security:
+        - api_key: []    
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateUserPasswordRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    type: string
+                    default: PasswordSuccessfullyModified 
+  /students//tracks/{trackId}/addtrack:
+    put:
+      tags:
+        - Students
+      summary: Add a track 
+      operationId: AddTrackByStudent
+      parameters:
+        - in: path
+          name: trackId
+          schema:
+            type: string
+          description: Track id to add
+          required: true
+      security:
+        - api-key: []
+      responses:
+        200:
+          description: Track added by student
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentTracksResponse'     
+  /students//tracks/{trackId}/removetrack:
+    put:
+      tags:
+        - Students
+      summary: Remove a track 
+      operationId: RemoveTrackByStudent
+      parameters:
+        - in: path
+          name: trackId
+          schema:
+            type: string
+          description: Track id to remove
+          required: true
+      security:
+        - api-key: []
+      responses:
+        200:
+          description: Track removed by student
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentTracksResponse'
+  /countries:
+    post:
+      tags:
+        - Countries
+      summary: Add a country
+      operationId: AddCountry
+      security:
+        - api_key: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Country name
+                code:
+                  type: string
+                  description: Country code
+                image:
+                  type: string
+                  format: binary
+                  description: Country image
+        required: true
+      responses:
+        200:
+          description: A new country added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+    get:
+      tags:
+        - Countries
+      summary: Get all countries
+      operationId: GetAllCountries
+      responses:
+        200: 
+          description: List of countries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CountryDetailsResponse'
+  /countries/search:
+    get:
+      tags:
+        - Countries
+      summary: Get a country by code
+      operationId: GetCountryByCode
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+          description: Country code
+      responses:
+        200:
+          description: Country found
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/CountryDetailsResponse'
+  /countries/{countryId}:
+    get:
+      tags:
+        - Countries
+      summary: Get a country by id
+      operationId: GetCountryById
+      parameters:
+        - in: path
+          name: countryId
+          schema:
+            type: string
+          description: Country Id
+          required: true
+      responses:
+        200: 
+          description: Country found
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/CountryDetailsResponse'
+    delete:
+      tags:
+        - Countries
+      summary: Delete a country
+      operationId: DeleteCountry
+      security:
+        - api_key: []
+      parameters:
+        - in: path
+          name: countryId
+          schema:
+            type: string
+          description: Country Id
+          required: true
+      responses:
+        200:
+          description: Country deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    type: string
+                    description: Error message
+                    default: CountrySuccessfullyDeleted
+  /countries/{countryId}/infos:  
+    put:
+      tags:
+        - Countries
+      summary: Update country infos (name and code)
+      operationId: UpdateCountryInfos
+      security:
+        - api_key: []  
+      parameters:
+        - in: path
+          name: countryId
+          schema:
+            type: string
+          description: Country id
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Country name
+                code:
+                  type: string
+                  description: Country code 
+      responses:
+        200:
+          description: Country updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryDetailsResponse'
+  /countries/{countryId}/image:  
+    put:
+      tags:
+        - Countries
+      summary: Upload a new country image 
+      operationId: UpdateCountryImage
+      security:
+        - api_key: []  
+      parameters:
+        - in: path
+          name: countryId
+          schema:
+            type: string
+          description: Country id
+          required: true
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Country image
+      responses:
+        200:
+          description: Country updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryImageResponse'
+  /tracks:
+    post: 
+      tags:
+        - Tracks
+      summary: Add a track
+      operationId: AddTrack
+      security:
+        - api_key: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateTrackRequest'
+      responses:
+        200:
+          description: Track created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+    get:
+      tags:
+        - Tracks
+      summary: Get all tracks
+      operationId: GetAllTracks
+      responses:
+        200:
+          description: Tracks got
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ExamTrackDetailsResponse'
+                  - $ref: '#/components/schemas/ContestTrackDetailsResponse'
+  /tracks/search:
+    get:
+      tags:
+        - Tracks
+      summary: Get tracks by category and country
+      operationId: GetTracksByCategoryAndCountry
+      description: Fill at least one field
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+            enum:
+              - Exam
+              - Contest
+          description: Track category
+        - in: query
+          name: country
+          schema:
+            type: string
+          description: Country Id
+      responses:
+        200:
+          description: List of tracks
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ExamTrackDetailsResponse'
+                  - $ref: '#/components/schemas/ContestTrackDetailsResponse'
+  /tracks/{trackId}: 
+
+    get: 
+      tags:
+        - Tracks
+      summary: Get a track
+      operationId: GetTrack
+      parameters:
+        - in: path
+          name: trackId
+          schema:
+            type: string
+          description: Track Id
+          required: true
+      responses:
+        200:
+          description: Track got
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ExamTrackDetailsResponse'
+                  - $ref: '#/components/schemas/ContestTrackDetailsResponse'
+
+    put:
+      tags: 
+        - Tracks
+      summary: Update a track
+      operationId: UpdateTrack
+      security:
+        - api_key: []
+      parameters:
+        - in: path
+          name: trackId
+          schema:
+            type: string
+          description: Track Id
+          required: true
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateTrackRequest'
+      responses:
+        200:
+          description: Track updated
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ExamTrackDetailsResponse'
+                  - $ref: '#/components/schemas/ContestTrackDetailsResponse'
+    delete:
+      tags:
+        - Tracks
+      summary: Delete a track
+      operationId: DeleteTrack
+      security:
+        - api_key: []
+      parameters:
+        - in: path
+          name: trackId
+          schema:
+            type: string
+          description: Track Id
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: Admin password
+      responses:
+        200: 
+          description: Track deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  details:
+                    type: string
+                    default: TrackSuccessfullyDeleted
+components:
+    schemas:
+      LocationResponse:
+        type: object
+        properties:
+          country:
+            type: string
+            description: Country name
+          code:
+            type: string
+            description: Country code     
+      CreateUserRequest:
+        type: object
+        properties:
+          name:
+            type: string
+            description: User name
+          email:
+            type: string
+            description: User email
+          password:
+            type: string
+            description: User password
+          repeat_password:
+            type: string
+            description: Rewrite the same password 
+      CredentialsUserRequest:
+        type: object
+        properties:
+          email:
+            type: string
+            description: User email
+          password:
+            type: string
+            description: User password
+      UpdateUserNameRequest:
+        type: object
+        properties:
+          name:
+            type: string
+            description: User name
+      UpdateUserPasswordRequest:
+        type: object
+        properties:
+          oldPassword:
+            type: string
+            description: Current user password
+          newPassword:
+            type: string
+            description: New user password
+      DeleteUserRequest:
+        type: object
+        properties:
+          password:
+            type: string
+            description: User password
+      CreateTrackRequest:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Track name
+          category:
+            type: string
+            description: Category name
+            enum: 
+              - Exam
+              - Contest
+          diploma:
+            type: string
+            description: Diploma name (required if it's an exam track)
+          school:
+            type: string
+            description: School name (required if it's a contest track)
+          country:
+            type: string
+            description: Country id
+          description:
+            type: string
+            description: Description text 
+        required:
+          - name
+          - category
+          - country
+          - description     
+      IdResponse:
+        type: object
+        properties:
+          id:
+            type: string
+            description: User/thing id
+      LogInUserResponse:
+        type: object
+        properties:
+          id:
+            type: string
+            description: User id
+          token:
+            type: string
+            description: Authentication token
+      UserDetailsResponse:
+        type: object
+        properties:
+          id:
+            type: string
+            description: User id
+          name:
+            type: string
+            description: User name
+          email:
+            type: string
+            description: User email
+      AdminDetailsResponse:
+        allOf: 
+          - $ref: '#/components/schemas/UserDetailsResponse'
+          - type: object
+            properties:
+              role:
+                type: string
+                default: admin
+      StudentDetailsResponse:
+        allOf: 
+          - $ref: '#/components/schemas/UserDetailsResponse'
+          - type: object
+            properties:
+              role:
+                type: string
+                default: student
+              tracks:
+                type: array
+                description: List of tracks ids
+                items:
+                  type: string
+      StudentTracksResponse:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Track id
+            name:
+              type: string
+              description: Track name
+            category:
+              type: string
+              description: Track category
+              enum:
+                - Exam
+                - Contest
+            diploma:
+              type: string
+              description: Diploma name
+            school:
+              type: string
+              description: School name
+            country:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Country id
+                name:
+                  type: string
+                  description: Country name
+            description:id:
+              type: string
+              description: Description text
+      CountryDetailsResponse: 
+        type: object
+        properties:
+          id:
+            type: string
+            description: Country id
+          name:
+            type: string
+            description: Country name
+          code:
+            type: string
+            description: Country code
+          image:
+            type: string
+            description: Image url
+      CountryImageResponse: 
+        type: object
+        properties:
+          id:
+            type: string
+            description: Country id
+          image:
+            type: string
+            description: Image url
+      ExamTrackDetailsResponse:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Track Id
+            name:
+              type: string
+              description: Track name
+            category:
+              type: string
+              description: Track category
+              default: Exam
+            diploma:
+              type: string
+              description: Diploma name 
+            country:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Country Id
+                name:
+                  type: string
+                  description: Country name
+            description:
+              type: string
+              description: Description text 
+      ContestTrackDetailsResponse:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Track Id
+            name:
+              type: string
+              description: Track name
+            category:
+              type: string
+              description: Track category
+              default: Contest
+            school:
+              type: string
+              description: School name 
+            country:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Country Id
+                name:
+                  type: string
+                  description: Country name
+            description:
+              type: string
+              description: Description text   
+    securitySchemes:
+      api_key:
+        type: apiKey
+        name: authorization
+        in: header

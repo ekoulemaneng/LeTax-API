@@ -1,0 +1,16 @@
+{
+  "name": "lefax-api",
+  "packageManager": "yarn@3.0.2",
+  "dependencies": {
+    "@supercharge/request-ip": "^1.1.2",
+    "axios": "^0.23.0",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.11",
+    "multer": "^1.4.3",
+    "swagger-ui-express": "^4.2.0",
+    "yamljs": "^0.3.0"
+  }
+}

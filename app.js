@@ -10,6 +10,18 @@ app.use(cors())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
+const helmet = require('helmet')
+app.use(helmet())
+
+const rateLimit = require('express-rate-limit')
+app.use(rateLimit({ max: 100, windowMs: 60 * 60 * 1000 }))
+
+const mongoSanitize = require('express-mongo-sanitize')
+app.use(mongoSanitize())
+
+const xss = require('xss-clean')
+app.use(xss())
+
 const swaggerUI = require('swagger-ui-express')
 const YAML = require('yamljs')
 

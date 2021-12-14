@@ -14,7 +14,7 @@ router.post('/', signUpRequestsValidator, async (req, res) => {
             res.status(404).send({ error: 'EmailAlreadyUsed' })
             return
         } 
-        res.send({ id: response }) 
+        res.send(response) 
     }
     catch (error) {
         console.error(error)

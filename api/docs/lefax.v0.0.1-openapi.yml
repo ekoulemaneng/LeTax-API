@@ -20,9 +20,7 @@ tags:
     description: Operations about countries
   - name: Tracks
     description: Operations on tracks 
-servers:
-  - url: 'http://localhost:8080/api/v0.0.1'
-    description: development server 
+servers: 
   - url: 'https://letax-api.ekoulemaneng.repl.co/api/v0.0.1/'
     description: production server
 paths:

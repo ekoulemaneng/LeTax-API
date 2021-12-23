@@ -2,6 +2,7 @@ const Country = require('../models/countries')
 const { nameFile, deleteFile } = require('../services/fileNameHandler')
 const path = require('path')
 const { countryImagesPath } = require('../../../config')
+const { checkCache, setCache, getCache } = require('../services/cacheHandler')
 
 const capitalize = name => {
     const lower = name.toLowerCase()
@@ -18,6 +19,7 @@ module.exports = {
             nameFile(countryImagesPath, imageFilename, 'image', country, 'name')
             country.image = '/api/v0.0.1/countries/images/' + country.name.toLowerCase() + '_image' + path.extname(imageFilename)
             await country.save()
+            await setCache('countries', await Country.find())
             return { id: country._id }
         } 
         catch (error) {
@@ -27,7 +29,15 @@ module.exports = {
 
     getCountryById: async (id) => {
         try {
-            const country = await Country.findById(id)
+            let country = {}
+            if (checkCache('countries')) {
+                let countries = await getCache('countries')
+                country = countries.find(country => country._id == id)
+            }
+            else {
+                country = await Country.findById(id)
+                await setCache('countries', await Country.find())
+            }
             if (!country) return null
             return { id: country._id, name: country.name, code: country.code, image: country.image }
         } 
@@ -38,7 +48,15 @@ module.exports = {
 
     getCountryByCode: async (code) => {
         try {
-            const country = await Country.findOne({ code: code.toUpperCase() })
+            let country = {}
+            if (checkCache('countries')) {
+                let countries = await getCache('countries')
+                country = countries.find(country => country.code == code.toUpperCase())
+            }
+            else {
+                country = await Country.findOne({ code: code.toUpperCase() })
+                await setCache('countries', await Country.find())
+            }
             if (!country) return null
             return { id: country._id, name: country.name, code: country.code, image: country.image }
         } 
@@ -49,7 +67,12 @@ module.exports = {
 
     getAllCountries: async () => {
         try {
-            const countries = await Country.find().select('-__v')
+            let countries = []
+            if (checkCache('countries')) countries = await getCache('countries')
+            else {
+                countries = await Country.find()
+                await setCache('countries', countries)
+            }
             if (countries.length == 0) return null
             let newCountries = []
             for (let i = 0; i < countries.length; i++) {
@@ -76,6 +99,7 @@ module.exports = {
             nameFile(countryImagesPath, imageFileName, 'image', country, 'name')
             country.image = '/api/v0.0.1/countries/images/' + country.name.trim().toLowerCase() + '_image' + path.extname(imageFileName)
             await country.save()
+            await setCache('countries', await Country.find())
             return { id: country._id, name: country.name, code: country.code, image: country.image }
         } 
         catch (error) {
@@ -99,10 +123,13 @@ module.exports = {
         try {
             let country = await Country.findById(id)
             if (!country) return 0
-            deleteCountryImage(country)
+            deleteFile(countryImagesPath, '/api/v0.0.1/countries/images/', country, 'image')
             await Country.findByIdAndDelete(id)
             country = await Country.findById(id)
-            if (!country) return true
+            if (!country) { 
+                await setCache('countries', await Country.find())
+                return true
+            }
             else return 1
         } 
         catch (error) {

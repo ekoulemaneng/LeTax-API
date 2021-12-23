@@ -2,6 +2,7 @@
   "name": "lefax-api",
   "packageManager": "yarn@3.0.2",
   "dependencies": {
+    "redis": "^4.0.1",
     "@supercharge/request-ip": "^1.1.2",
     "axios": "^0.23.0",
     "bcrypt": "^5.0.1",

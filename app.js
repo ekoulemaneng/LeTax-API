@@ -1,8 +1,11 @@
 const express = require('express')
 const app = express()
 
-const { connectDB } = require('./config')
-connectDB()
+const { connectMongoDB } = require('./config')
+connectMongoDB()
+
+const { connectRedisDB } = require('./config')
+connectRedisDB()
 
 const cors = require('cors')
 app.use(cors())

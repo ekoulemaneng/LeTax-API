@@ -2,6 +2,7 @@ const Track = require('../models/tracks')
 const countryControllers = require('./countries')
 const adminControllers = require('./admins')
 const { checkPassword } = require('../services/passwordUtils')
+const { checkCache, setCache, getCache } = require('../services/cacheHandler')
 
 const generateTrack = async (track) => {
     let newTrack = {}
@@ -45,6 +46,7 @@ module.exports = {
             let track
             if (category == 'Exam') track = await Track.create({ name, category, diploma, country, description })
             else if (category == 'Contest') track = await Track.create({ name, category, school, country, description })
+            await setCache('tracks', await Track.find())
             return { id: track._id }
         } 
         catch (error) {
@@ -54,7 +56,12 @@ module.exports = {
 
     getAllTracks: async () => {
         try {
-            let tracks = await Track.find()
+            let tracks = []
+            if (checkCache('tracks')) tracks = await getCache('tracks')
+            else {
+                tracks = await Track.find()
+                await setCache('tracks', tracks)
+            }
             if (tracks.length == 0) return null
             return await generateTracks(tracks)
         }
@@ -71,19 +78,34 @@ module.exports = {
             isCountry = isCountry ? true : false
             if (!isCategory && !isCountry) return 0
             else if (isCategory && !isCountry) {
-                const tracks = await Track.find({ category })
+                let tracks = []
+                if (checkCache('tracks')) tracks = (await getCache('tracks')).filter(track => track.category == category)
+                else {
+                    tracks = await Track.find({ category })
+                    await setCache('tracks', await Track.find())
+                }
                 if (tracks.length == 0) return 1
                 return await generateTracks(tracks)
             }
             else if (!isCategory && isCountry) {
                 if (!(await countryControllers.getCountryById(country))) return 2
-                const tracks = await Track.find({ country })
+                let tracks = []
+                if (checkCache('tracks')) tracks = (await getCache('tracks')).filter(track => track.country == country)
+                else {
+                    tracks = await Track.find({ country })
+                    await setCache('tracks', await Track.find())
+                }
                 if (tracks.length == 0) return 1
                 return await generateTracks(tracks)
             }
             else {
                 if (!(await countryControllers.getCountryById(country))) return 2
-                const tracks = await Track.find({ category, country })
+                let tracks = []
+                if (checkCache('tracks')) tracks = (await getCache('tracks')).filter(track => track.category == category && track.country == country)
+                else {
+                    tracks = await Track.find({ category, country })
+                    await setCache('tracks', await Track.find())
+                }
                 if (tracks.length == 0) return 1
                 return await generateTracks(tracks)
             }
@@ -95,7 +117,12 @@ module.exports = {
 
     getTrackById: async (id) => {
         try {
-            const track = await Track.findById(id)
+            let track = {}
+            if (checkCache('tracks')) track = (await getCache('tracks')).find(track => track._id == id)
+            else {
+                track = await Track.findById(id)
+                await setCache('tracks', await Track.find())
+            }
             if (!track) return 0
             const country = await countryControllers.getCountryById(track.country)
             if (!country) return 1
@@ -118,6 +145,7 @@ module.exports = {
             if (country != track.country) track.country = country
             if (description && description.replace(/\s/g, '') !== '' && description !== track.description ) track.description = description
             await track.save()
+            await setCache('tracks', await Track.find())
             return await generateTrack(track)
         } 
         catch (error) {
@@ -135,7 +163,10 @@ module.exports = {
             if (!isPasswordCorrect) return 2
             await Track.findByIdAndDelete(id)
             track = await this.getTrackById(id)
-            if (!track) return true
+            if (!track) {
+                await setCache('tracks', await Track.find())
+                return true
+            }
             else return 3
         } 
         catch (error) {
